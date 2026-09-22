@@ -1,98 +1,180 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+  Dimensions,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const { height } = Dimensions.get('window');
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
+export default function SignInScreen() {
+  const router = useRouter();
+
+  function handleSignIn() {
+    router.push('/home'); 
   }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <LinearGradient
+      colors={['#0E1647', '#0A1033']}
+      style={styles.container}
+    >
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      {/* Bloco das Imagens */}
+      <View style={styles.heroSection}>
+        {/* Faixas de fundo */}
+        <Image
+          source={require('../../assets/images/background.png')}
+          style={styles.backgroundImage}
+          resizeMode="cover"
+        />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        {/* Guerreiro */}
+        <Image
+          source={require('../../assets/images/illustration.png')}
+          style={styles.heroImage}
+          resizeMode="contain"
+        />
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        {/* Imagem de degradê na base dos pés */}
+        <Image
+          source={require('../../assets/images/overlay.png')}
+          style={styles.gradientOverlay}
+          resizeMode="stretch"
+        />
+      </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      {/* Bloco de Textos e Botão aproximados */}
+      <View style={styles.content}>
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>
+            Conecte-se{'\n'}
+            e organize suas{'\n'}
+            jogatinas
+          </Text>
+
+          <Text style={styles.subtitle}>
+            Crie grupos para jogar seus games{'\n'}
+            favoritos com seus amigos
+          </Text>
+        </View>
+
+        {/* Botão Discord aproximado do texto */}
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.8}
+          onPress={handleSignIn}
+        >
+          <View style={styles.iconWrapper}>
+            <FontAwesome5 name="discord" size={24} color="#FFFFFF" />
+          </View>
+
+          <Text style={styles.buttonText}>
+            Entrar com Discord
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    justifyContent: 'space-between',
+    paddingBottom: 40,
   },
   heroSection: {
-    alignItems: 'center',
+    width: '100%',
+    height: height * 0.44,
+    marginTop: 90,
     justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    zIndex: 1,
+  },
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    opacity: 0.9,
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+    zIndex: 2,
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    bottom: -10,
+    width: '100%',
+    height: 90,
+    zIndex: 3,
+    opacity: 0.95,
+  },
+  content: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    width: '100%',
+    paddingHorizontal: 40,
+    alignItems: 'center',
+    justifyContent: 'flex-start', // Remove o espaçamento forçado até o rodapé
+    paddingTop: 8,
+    gap: 32, // Distância próxima e equilibrada entre o texto e o botão
+    zIndex: 4,
+  },
+  textContainer: {
+    alignItems: 'center',
+    marginTop: -38,
   },
   title: {
+    color: '#DDE3F0',
     textAlign: 'center',
+    fontSize: 38,
+    fontWeight: 'bold',
+    lineHeight: 46,
+    marginBottom: 12,
   },
-  code: {
-    textTransform: 'uppercase',
+  subtitle: {
+    color: '#ABB1CC',
+    fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 25,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  button: {
+    width: '100%',
+    height: 56,
+    backgroundColor: '#E51C44',
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  iconWrapper: {
+    width: 56,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRightWidth: 1,
+    borderRightColor: '#991F36',
+  },
+  buttonText: {
+    flex: 1,
+    color: '#FFFFFF',
+    fontSize: 15,
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });

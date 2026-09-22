@@ -1,18 +1,42 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  useFonts,
+} from '@expo-google-fonts/inter';
+import {
+  Rajdhani_500Medium,
+  Rajdhani_700Bold,
+} from '@expo-google-fonts/rajdhani';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { useEffect } from 'react';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
-
+// Impede que a tela de splash suma antes das fontes carregarem
 SplashScreen.preventAutoHideAsync();
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Rajdhani_500Medium,
+    Rajdhani_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    />
   );
 }
