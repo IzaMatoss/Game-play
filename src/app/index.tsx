@@ -18,7 +18,7 @@ export default function SignInScreen() {
   const router = useRouter();
 
   function handleSignIn() {
-    router.push('/home'); 
+    router.push('/home'); // Navega diretamente para a tela Home
   }
 
   return (
